@@ -1,4 +1,4 @@
-const jwt = require('jwtwebtoken');
+const jwt = require('jsonwebtoken');
 
 function authenticate(req, res, next){
 // looking for a web token authorization
@@ -6,7 +6,7 @@ const authHeader = req.headers.authorization;
 
 // if there is no header
 if(!authHeader){
-    return res.status(401)json({
+    return res.status(401).json({
          sucess:false, 
          error:"no token provided"
     })
@@ -28,6 +28,6 @@ try{
         })
    
 }
-
-
 }
+
+module.exports = {authenticate};

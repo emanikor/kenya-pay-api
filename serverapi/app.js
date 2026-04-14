@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 
+
 const app = express();
 
 
@@ -29,7 +30,7 @@ app.get('./api/pay', payRoutes);
 
 
 // 404 if routes not matched
-app.user((req, res)=>{
+app.use((req, res)=>{
     res.status(404).json({
         error: "route not found "
     })
