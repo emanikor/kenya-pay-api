@@ -1,5 +1,5 @@
 // Global error handler - must be in app.js 
-function errorHandler(req,res, next){
+function errorHandler(req, res, next){
     console.error(`ERROR: ${err.message}`);
 
 

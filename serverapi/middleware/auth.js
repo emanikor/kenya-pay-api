@@ -1,33 +1,35 @@
 const jwt = require('jsonwebtoken');
 
-function authenticate(req, res, next){
-// looking for a web token authorization
-const authHeader = req.headers.authorization;
+function authenticate(req, res, next) {
+  // looking for a web token authorization
+  const authHeader = req.headers.authorization;
 
-// if there is no header
-if(!authHeader){
+  // if there is no header
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({
-         sucess:false, 
-         error:"no token provided"
-    })
-}
-// we split the bearer token 
-const token = authHeader.split("")[1];
+      success: false, 
+      error: "No token provided or invalid format"
+    });
+  }
 
-try{
-      // decode and verify the token
-     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // attach user info to req
-       req.user = decode;
-    //next()if the token is good
-      next()     
-     }catch(err){
-        res.status(401).json({
-            sucess:false, 
-         error:"invalid token or expired"
-        })
-   
-}
+  // We split the "Bearer <token>" string by the space to get just the token
+  const token = authHeader.split(" ")[1];
+
+  try {
+    // decode and verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // attach user info to req
+    req.user = decoded; 
+    
+    // next() if the token is good
+    next();     
+  } catch (err) {
+    return res.status(401).json({
+      success: false, 
+      error: "Invalid token or expired"
+    });
+  }
 }
 
-module.exports = {authenticate};
+module.exports = { authenticate };

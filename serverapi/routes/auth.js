@@ -22,35 +22,38 @@ router.post('/register', asyncHandler(async(req, res)=>{
 }));
 
 // POST /api/auth/login
-router.post('/login' , asyncHandler(async (req, res)=>{
+router.post('/login', asyncHandler(async (req, res) => {
     const {email, password} = req.body;
 
-    const users = await user.findOne({email});
-    if(!user || !(await user.matchPassword(password))){
-        const err = new Error("invalid email or password");
+    const foundUser = await user.findOne({email});
+    if (!foundUser || !(await foundUser.matchPassword(password))) {
+        const err = new Error("Invalid email or password");
         err.status = 401;
         throw err;
-
     }
+
     const token = jwt.sign(
-        {id: user._id, email:user.email},
+        {id: foundUser._id, email: foundUser.email},
         process.env.JWT_SECRET,
         {expiresIn: "7d"}
     );
 
-    res.json({sucess: true, token , user:{
-        name: user.name,
-        email: user.email
-    }})
-
+    res.json({
+        success: true,
+        token,
+        user: {
+            name: foundUser.name,
+            email: foundUser.email
+        }
+    });
 }));
+
 
 // GET /api/auth/profile (protected)
 const {authenticate} = require('../middleware/auth');
- router.get('/profile', authenticate, asyncHandler(async  (req, res)=>{
-    const user = await user.findById(req.user.id).select("-password");
-    //.select("-password") means: return all fields EXCEPT password
-    res.json({success: true, user});
- }));
+router.get('/profile', authenticate, asyncHandler(async (req, res) => {
+    const profile = await user.findById(req.user.id).select("-password");
+    res.json({success: true, user: profile});
+}));
 
  module.exports = router;

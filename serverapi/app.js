@@ -1,11 +1,9 @@
 const express =require('express');
 const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
-const payRoutes  = require('./routes/payment')
+const paymentRoutes = require('./routes/payment');
 const cors = require('cors');
 const helmet = require('helmet');
-
-
 
 const app = express();
 
@@ -25,8 +23,8 @@ app.get('/', (req, res)=>{
 
 
 //routes 
-app.get('./api/auth', authRoutes);
-app.get('./api/pay', payRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/pay', paymentRoutes);
 
 
 // 404 if routes not matched
